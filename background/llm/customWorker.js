@@ -16,19 +16,28 @@ async function fetchArrayBuffer(url) {
 class Phi {
   static instance = {}
 
-  static async getInstance(weightsURL, modelID, tokenizerURL, quantized) {
+  static async getInstance(
+    weightsURL,
+    modelID,
+    tokenizerURL,
+    configURL,
+    quantized
+  ) {
     // load individual modelID only once
     if (!this.instance[modelID]) {
       await init()
 
-      const [weightsArrayU8, tokenizerArrayU8] = await Promise.all([
-        fetchArrayBuffer(weightsURL),
-        fetchArrayBuffer(tokenizerURL)
-      ])
+      const [weightsArrayU8, tokenizerArrayU8, configArrayU8] =
+        await Promise.all([
+          fetchArrayBuffer(weightsURL),
+          fetchArrayBuffer(tokenizerURL),
+          fetchArrayBuffer(configURL)
+        ])
 
       this.instance[modelID] = new Model(
         weightsArrayU8,
         tokenizerArrayU8,
+        configArrayU8,
         quantized
       )
     }
@@ -41,6 +50,7 @@ async function generate(data) {
     weightsURL,
     modelID,
     tokenizerURL,
+    configURL,
     quantized,
     prompt,
     temp,
@@ -53,6 +63,7 @@ async function generate(data) {
     weightsURL,
     modelID,
     tokenizerURL,
+    configURL,
     quantized
   )
 
@@ -73,7 +84,7 @@ async function generate(data) {
     const token = await model.next_token()
     console.log(token)
     if (token === "<|endoftext|>") {
-      return
+      return sentence
     }
     sentence += token
     tokensCount++
@@ -82,22 +93,26 @@ async function generate(data) {
 }
 
 export async function generateSequence(prompt, temperature, topP, maxSeqLen) {
-  const modelID = "phi_1_5_quantized_2"
+  const modelID = "model-puffin-phi-v2-q80.gguf"
   const model = {
     base_url: "https://huggingface.co/lmz/candle-quantized-phi/resolve/main/",
-    model: "model-q80.gguf",
+    model: "model-puffin-phi-v2-q80.gguf",
+    tokenizer: "tokenizer-puffin-phi-v2.json",
+    config: "puffin-phi-v2.json",
     quantized: true,
-    seq_len: 2048
+    seq_len: 2048,
+    size: "1.50 GB"
   }
-  const TOKENIZER_URL =
-    "https://huggingface.co/microsoft/phi-1_5/raw/main/tokenizer.json"
+  const tokenizerURL = model.base_url + model.tokenizer
+  const configURL = model.base_url + model.config
   const weightsURL = model.base_url + model.model
 
   return new Promise((resolve, reject) => {
     generate({
       weightsURL,
       modelID,
-      tokenizerURL: TOKENIZER_URL,
+      tokenizerURL: tokenizerURL,
+      configURL: configURL,
       quantized: model.quantized,
       prompt,
       temp: temperature,

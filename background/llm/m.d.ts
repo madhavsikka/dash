@@ -7,9 +7,10 @@ export class Model {
 /**
 * @param {Uint8Array} weights
 * @param {Uint8Array} tokenizer
+* @param {Uint8Array} config
 * @param {boolean} quantized
 */
-  constructor(weights: Uint8Array, tokenizer: Uint8Array, quantized: boolean);
+  constructor(weights: Uint8Array, tokenizer: Uint8Array, config: Uint8Array, quantized: boolean);
 /**
 * @param {string} prompt
 * @param {number} temp
@@ -31,7 +32,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_model_free: (a: number) => void;
-  readonly model_load: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly model_load: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => void;
   readonly model_init_with_prompt: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly model_next_token: (a: number, b: number) => void;
   readonly main: (a: number, b: number) => number;
