@@ -14,7 +14,8 @@ const scrape = async () => {
   const resp = await sendToBackground({
     name: "scrape",
     body: {
-      textContent
+      textContent: textContent,
+      url: window.location.href
     }
   })
 }
