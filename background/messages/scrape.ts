@@ -1,26 +1,102 @@
+import { env, pipeline, Pipeline } from "@xenova/transformers"
+import { Embeddings } from "langchain/dist/embeddings/base"
+import { Document } from "langchain/document"
+import { MemoryVectorStore } from "langchain/vectorstores/memory"
+
+// import { VoyVectorStore } from "langchain/vectorstores/voy"
+// import { Voy as VoyClient } from "voy-search"
+
+// import { generateSequence } from "../llm/customWorker"
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import "subworkers"
 
-import { generateSequence } from "../llm/customWorker"
+//@ts-ignore
+env.allowLocalModels = false
+env.backends.onnx.wasm.numThreads = 1
+
+export class MiniLMEmbeddings extends Embeddings {
+  private model
+  constructor() {
+    super({})
+  }
+
+  async initModel() {
+    this.model = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2")
+  }
+
+  async embedDocuments(texts) {
+    if (!this.model) {
+      await this.initModel()
+    }
+    const embeddings = []
+    for (const text of texts) {
+      const embedding = await this.embedQuery(text)
+      embeddings.push(embedding)
+    }
+    return embeddings
+  }
+
+  async embedQuery(text) {
+    return this.model(text)
+  }
+}
+
+const embeddings = new MiniLMEmbeddings()
+// const voyClient = new VoyClient()
+// const store = new VoyVectorStore(voyClient, embeddings)
+
+let store: MemoryVectorStore
+;(async () => {
+  store = await MemoryVectorStore.fromTexts([], [], embeddings)
+})()
+
+// let extractor: Pipeline
+// ;(async () => {
+//   extractor = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2")
+// })()
+
+// async function extract(extractor: Pipeline, text: string) {
+//   const result = await extractor(text, { pooling: "mean", normalize: true })
+//   return result.data
+// }
 
 const handler: PlasmoMessaging.MessageHandler = async (
   req: PlasmoMessaging.Request<string, Record<string, string>>,
   res
 ) => {
   const textContent = req.body.textContent
-  // const shortTextContent = textContent.slice(0, 100)
 
-  const shortTextContent = `The audio quality of the official video wasnt great due to an issue with the microphone, but I ran that audio through Adobes Enhance Speech tool and uploaded my own video with the enhanced audio to YouTube. Embeddings are a technology thats adjacent to the wider field of Large Language Models—the technology behind ChatGPT and Bard and Claude. Embeddings are based around one trick: take a piece of content—in this case a blog entry—and turn that piece of content into an array of floating point numbers.`
+  if (!store) {
+    console.log("Store not ready")
+    res.send({
+      message: "Store not ready"
+    })
+    return
+  }
 
-  const prompt = `
-  Write a summary of the following text in 50 words: ${shortTextContent}
-  Summary:
-  `
+  console.log("Adding document to store")
+  await store.addDocuments([
+    new Document({
+      pageContent: textContent
+    })
+  ])
 
-  const llmOut = await generateSequence(prompt, 0.7, 0.9, 300)
+  const query = await embeddings.embedQuery("Evilness")
+  const resultsWithScore = await store.similaritySearchVectorWithScore(query, 1)
+  console.log(JSON.stringify(resultsWithScore, null, 2))
 
-  console.log(llmOut)
+  // if (!extractor) {
+  //   console.log("Extractor not ready")
+  //   res.send({
+  //     message: "Extractor not ready"
+  //   })
+  //   return
+  // }
+
+  // const emb = await extract(extractor, textContent)
+  // const llmOut = await generateSequence(prompt, 0.7, 0.9, 300)
+  // console.log(llmOut)
 
   res.send({
     message: "Got it in BGSW"
