@@ -93,10 +93,20 @@ async function generate(data) {
 }
 
 export async function generateSequence(prompt, temperature, topP, maxSeqLen) {
-  const modelID = "model-puffin-phi-v2-q80.gguf"
+  // const modelID = "model-puffin-phi-v2-q80.gguf"
+  // const model = {
+  //   base_url: "https://huggingface.co/lmz/candle-quantized-phi/resolve/main/",
+  //   model: "model-puffin-phi-v2-q80.gguf",
+  //   tokenizer: "tokenizer-puffin-phi-v2.json",
+  //   config: "puffin-phi-v2.json",
+  //   quantized: true,
+  //   seq_len: 2048,
+  //   size: "1.50 GB"
+  // }
+  const modelID = "model-phi-hermes-1_3B-q4k.gguf"
   const model = {
     base_url: "https://huggingface.co/lmz/candle-quantized-phi/resolve/main/",
-    model: "model-puffin-phi-v2-q80.gguf",
+    model: "model-phi-hermes-1_3B-q4k.gguf",
     tokenizer: "tokenizer-puffin-phi-v2.json",
     config: "puffin-phi-v2.json",
     quantized: true,

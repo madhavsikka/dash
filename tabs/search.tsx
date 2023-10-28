@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react"
+import { useMemo, useState } from "react"
 
 import "./style.css"
+
+import { CandleLLM } from "~llm/candle-llm"
 
 enum ChatMessageType {
   User = "user",
@@ -294,25 +296,33 @@ export const ChatMessages = ({ messages }: { messages: ChatMessage[] }) => {
 }
 
 export const Search = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      from: ChatMessageType.AI,
-      message: "Hello! How can I help you today?"
-    },
-    {
-      from: ChatMessageType.User,
-      message: "I want to know about the weather in New York"
-    },
-    {
-      from: ChatMessageType.AI,
-      message: "The weather in New York is 22 degrees celsius"
-    }
-  ])
+  const [messages, setMessages] = useState<ChatMessage[]>([])
 
-  const handleNewMessage = (message) => {
+  const candleLLM = useMemo(() => {
+    return new CandleLLM({})
+  }, [])
+
+  const handleNewMessage = async (message: string) => {
+    const updatedMessages = [
+      ...messages,
+      { from: ChatMessageType.User, message }
+    ]
     setMessages((prevMessages) => [
       ...prevMessages,
       { from: ChatMessageType.User, message }
+    ])
+
+    const response = await candleLLM._generate(
+      updatedMessages.map((msg) => msg.message),
+      {}
+    )
+    // TODO: Fix state update logic.
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        from: ChatMessageType.AI,
+        message: response?.generations?.[0]?.[0]?.text
+      }
     ])
   }
 
