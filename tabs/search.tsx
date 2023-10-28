@@ -201,9 +201,24 @@ const SideBar = () => {
   )
 }
 
-const ChatInput = () => {
+const ChatInput = ({ onNewMessage }) => {
+  const [input, setInput] = useState("")
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    onNewMessage(input)
+    setInput("")
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e)
+    }
+  }
+
   return (
-    <form className="mt-2">
+    <form className="mt-2" onSubmit={handleSubmit}>
       <label htmlFor="chat-input" className="sr-only">
         Enter your prompt
       </label>
@@ -233,7 +248,10 @@ const ChatInput = () => {
           id="chat-input"
           className="block w-full resize-none rounded-xl border-none bg-slate-950 p-4 pl-10 pr-20 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base"
           placeholder="Enter your prompt"
+          onKeyDown={handleKeyDown}
           rows={1}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           required></textarea>
         <button
           type="submit"
@@ -256,7 +274,7 @@ export const ChatMessages = ({ messages }: { messages: ChatMessage[] }) => {
               src="https://dummyimage.com/256x256/354ea1/ffffff&text=U"
             />
             <div className="flex max-w-3xl items-center rounded-xl">
-              <p>{message.message}</p>
+              <p className="whitespace-pre-wrap">{message.message}</p>
             </div>
           </div>
         ) : (
@@ -266,7 +284,7 @@ export const ChatMessages = ({ messages }: { messages: ChatMessage[] }) => {
               src="https://dummyimage.com/256x256/363536/ffffff&text=A"
             />
             <div className="flex max-w-3xl items-center">
-              <p>{message.message}</p>
+              <p className="whitespace-pre-wrap">{message.message}</p>
             </div>
           </div>
         )
@@ -291,12 +309,19 @@ export const Search = () => {
     }
   ])
 
+  const handleNewMessage = (message) => {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { from: ChatMessageType.User, message }
+    ])
+  }
+
   return (
     <div className="flex bg-slate-900">
       <SideBar />
       <div className="flex h-[100vh] w-full flex-col p-2">
         <ChatMessages messages={messages} />
-        <ChatInput />
+        <ChatInput onNewMessage={handleNewMessage} />
       </div>
     </div>
   )
