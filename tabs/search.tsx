@@ -15,7 +15,7 @@ interface ChatMessage {
 const SideBar = () => {
   return (
     <aside className="flex">
-      <div className="flex h-screen w-12 flex-col items-center space-y-8 border-r border-slate-300 bg-slate-50 py-8 dark:border-slate-700 dark:bg-slate-900 sm:w-16">
+      <div className="flex h-screen w-12 flex-col items-center space-y-8 border-r border-slate-300 bg-slate-950 py-8 dark:border-slate-700 sm:w-16">
         <a href="#" className="mb-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +122,7 @@ const SideBar = () => {
         </a>
       </div>
       {/* Second Column */}
-      <div className="h-screen w-52 overflow-y-auto bg-slate-50 py-8 dark:bg-slate-900 sm:w-60">
+      <div className="h-screen w-52 overflow-y-auto bg-slate-950 py-8 sm:w-60">
         <div className="flex items-start">
           <h2 className="inline px-5 text-lg font-medium text-slate-800 dark:text-slate-200">
             Chats
@@ -141,9 +141,8 @@ const SideBar = () => {
               <input
                 id="search-chats"
                 type="text"
-                className="w-full rounded-lg border border-slate-300 bg-slate-50 p-3 pr-10 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                className="w-full rounded-lg border border-slate-300 bg-slate-950 p-3 pr-10 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Search chats"
-                rows="1"
                 required
               />
               <button
@@ -171,26 +170,26 @@ const SideBar = () => {
             </div>
           </form>
 
-          <button className="flex w-full flex-col gap-y-2 rounded-lg px-3 py-2 text-left transition-colors duration-200 hover:bg-slate-200 focus:outline-none dark:hover:bg-slate-800">
+          <button className="flex w-full flex-col gap-y-2 rounded-lg px-3 py-2 text-left transition-colors duration-200 hover:bg-slate-900 focus:outline-none">
             <h1 className="text-sm font-medium capitalize text-slate-700 dark:text-slate-200">
               Tailwind Classes
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">12 Mar</p>
           </button>
 
-          <button className="flex w-full flex-col gap-y-2 rounded-lg bg-slate-200 px-3 py-2 text-left transition-colors duration-200 focus:outline-none dark:bg-slate-800">
+          <button className="flex w-full flex-col gap-y-2 rounded-lg bg-slate-900 px-3 py-2 text-left transition-colors duration-200 focus:outline-none dark:bg-slate-800">
             <h1 className="text-sm font-medium capitalize text-slate-700 dark:text-slate-200">
               explain quantum computing
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">10 Feb</p>
           </button>
-          <button className="flex w-full flex-col gap-y-2 rounded-lg px-3 py-2 text-left transition-colors duration-200 hover:bg-slate-200 focus:outline-none dark:hover:bg-slate-800">
+          <button className="flex w-full flex-col gap-y-2 rounded-lg px-3 py-2 text-left transition-colors duration-200 hover:bg-slate-900 focus:outline-none">
             <h1 className="text-sm font-medium capitalize text-slate-700 dark:text-slate-200">
               How to create ERP Diagram
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">22 Jan</p>
           </button>
-          <button className="flex w-full flex-col gap-y-2 rounded-lg px-3 py-2 text-left transition-colors duration-200 hover:bg-slate-200 focus:outline-none dark:hover:bg-slate-800">
+          <button className="flex w-full flex-col gap-y-2 rounded-lg px-3 py-2 text-left transition-colors duration-200 hover:bg-slate-900 focus:outline-none">
             <h1 className="text-sm font-medium capitalize text-slate-700 dark:text-slate-200">
               API Scaling Strategies
             </h1>
@@ -232,7 +231,7 @@ const ChatInput = () => {
         </button>
         <textarea
           id="chat-input"
-          className="block w-full resize-none rounded-xl border-none bg-slate-200 p-4 pl-10 pr-20 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-400 dark:focus:ring-blue-500 sm:text-base"
+          className="block w-full resize-none rounded-xl border-none bg-slate-950 p-4 pl-10 pr-20 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base"
           placeholder="Enter your prompt"
           rows={1}
           required></textarea>
@@ -248,23 +247,23 @@ const ChatInput = () => {
 
 export const ChatMessages = ({ messages }: { messages: ChatMessage[] }) => {
   return (
-    <div className="flex-1 overflow-y-auto rounded-xl bg-slate-200 p-4 text-sm leading-6 text-slate-900 dark:bg-slate-800 dark:text-slate-300 sm:text-base sm:leading-7">
+    <div className="flex-1 overflow-y-auto rounded-xl bg-slate-950 p-4 text-sm leading-6 text-slate-900 sm:text-base sm:leading-7">
       {messages.map((message) => {
         return message.from === "user" ? (
-          <div className="mb-4 flex rounded-xl bg-slate-50 px-2 py-6 dark:bg-slate-900 sm:px-4">
+          <div className="mb-4 flex rounded-xl bg-slate-900 px-2 py-6 sm:px-4">
             <img
               className="mr-2 flex h-8 w-8 rounded-full sm:mr-4"
-              src="https://dummyimage.com/256x256/354ea1/ffffff&text=A"
+              src="https://dummyimage.com/256x256/354ea1/ffffff&text=U"
             />
             <div className="flex max-w-3xl items-center rounded-xl">
               <p>{message.message}</p>
             </div>
           </div>
         ) : (
-          <div className="mb-4 flex rounded-xl bg-slate-50 px-2 py-6 dark:bg-slate-900 sm:px-4">
+          <div className="mb-4 flex rounded-xl bg-slate-900 px-2 py-6 sm:px-4">
             <img
               className="mr-2 flex h-8 w-8 rounded-full sm:mr-4"
-              src="https://dummyimage.com/256x256/363536/ffffff&text=U"
+              src="https://dummyimage.com/256x256/363536/ffffff&text=A"
             />
             <div className="flex max-w-3xl items-center">
               <p>{message.message}</p>
@@ -293,7 +292,7 @@ export const Search = () => {
   ])
 
   return (
-    <div className="flex">
+    <div className="flex bg-slate-900">
       <SideBar />
       <div className="flex h-[100vh] w-full flex-col p-2">
         <ChatMessages messages={messages} />
