@@ -57,7 +57,9 @@ async function generate(data) {
     top_p,
     repeatPenalty,
     seed,
-    maxSeqLen
+    maxSeqLen,
+    command,
+    plasmoRes
   } = data
   const model = await Phi.getInstance(
     weightsURL,
@@ -84,35 +86,49 @@ async function generate(data) {
     const token = await model.next_token()
     console.log(token)
     if (token === "<|endoftext|>") {
+      plasmoRes.send({
+        message: sentence.trim().replace(/<\|endoftext\|>/g, ""),
+        isRunning: false
+      })
       return sentence
     }
     sentence += token
+    plasmoRes.send({
+      message: sentence.trim().replace(/<\|endoftext\|>/g, ""),
+      isRunning: true
+    })
     tokensCount++
   }
   return sentence
 }
 
-export async function generateSequence(prompt, temperature, topP, maxSeqLen) {
-  // const modelID = "model-puffin-phi-v2-q80.gguf"
-  // const model = {
-  //   base_url: "https://huggingface.co/lmz/candle-quantized-phi/resolve/main/",
-  //   model: "model-puffin-phi-v2-q80.gguf",
-  //   tokenizer: "tokenizer-puffin-phi-v2.json",
-  //   config: "puffin-phi-v2.json",
-  //   quantized: true,
-  //   seq_len: 2048,
-  //   size: "1.50 GB"
-  // }
-  const modelID = "model-phi-hermes-1_3B-q4k.gguf"
+export async function generateSequence(
+  prompt,
+  temperature,
+  topP,
+  maxSeqLen,
+  plasmoRes
+) {
+  const modelID = "model-puffin-phi-v2-q4k.gguf"
   const model = {
     base_url: "https://huggingface.co/lmz/candle-quantized-phi/resolve/main/",
-    model: "model-phi-hermes-1_3B-q4k.gguf",
+    model: "model-puffin-phi-v2-q4k.gguf",
     tokenizer: "tokenizer-puffin-phi-v2.json",
     config: "puffin-phi-v2.json",
     quantized: true,
     seq_len: 2048,
     size: "1.50 GB"
   }
+  // const modelID = "model-phi-hermes-1_3B-q4k.gguf"
+  // const model = {
+  //   base_url: "https://huggingface.co/lmz/candle-quantized-phi/resolve/main/",
+  //   model: "model-phi-hermes-1_3B-q4k.gguf",
+  //   tokenizer: "tokenizer-puffin-phi-v2.json",
+  //   config: "puffin-phi-v2.json",
+  //   quantized: true,
+  //   seq_len: 2048,
+  //   size: "1.50 GB"
+  // }
   const tokenizerURL = model.base_url + model.tokenizer
   const configURL = model.base_url + model.config
   const weightsURL = model.base_url + model.model
@@ -130,7 +146,8 @@ export async function generateSequence(prompt, temperature, topP, maxSeqLen) {
       repeatPenalty: 1.0,
       seed: 10000,
       maxSeqLen,
-      command: "start"
+      command: "start",
+      plasmoRes
     })
       .then((res) => {
         console.log("LLM Res: ", res)
