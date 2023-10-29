@@ -1,27 +1,18 @@
-import { useState } from "react"
+import "./style.css"
 
 function IndexPopup() {
-  const [data, setData] = useState("")
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        padding: 16
-      }}>
-      <h2>
-        Welcome to your
-        <a href="https://www.plasmo.com" target="_blank">
-          {" "}
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
+    <div className="flex flex-col w-64 py-2 items-center rounded-lg bg-slate-950">
+      <h1 className="text-2xl font-medium capitalize text-slate-700">Dash</h1>
+      <button
+        className="my-3 rounded-lg px-3 py-3 transition-colors bg-slate-900 focus:outline-none"
+        onClick={() => {
+          chrome.tabs.create({ url: "tabs/search.html" })
+        }}>
+        <h1 className="text-lg font-medium capitalize text-slate-700">
+          Start Chatting
+        </h1>
+      </button>
     </div>
   )
 }
