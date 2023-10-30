@@ -4,8 +4,6 @@ import { usePort } from "@plasmohq/messaging/hook"
 
 import "./style.css"
 
-import { CandleLLM } from "~llm/candle-llm"
-
 enum ChatMessageType {
   User = "User",
   AI = "AI"
@@ -164,10 +162,12 @@ export const ChatMessages = ({
 }) => {
   return (
     <div className="flex-1 overflow-y-auto rounded-xl bg-slate-950 p-4 text-sm leading-6 text-slate-900 sm:text-base sm:leading-7">
-      {messages.concat(runningMessage).map((message) => {
+      {messages.concat(runningMessage).map((message, idx) => {
         if (!message?.message) return null
         return message.from === ChatMessageType.User ? (
-          <div className="mb-4 flex rounded-xl bg-slate-900 px-2 py-6 sm:px-4">
+          <div
+            className="mb-4 flex rounded-xl bg-slate-900 px-2 py-6 sm:px-4"
+            key={idx}>
             <img
               className="mr-2 flex h-8 w-8 rounded-full sm:mr-4"
               src="https://dummyimage.com/256x256/354ea1/ffffff&text=U"
@@ -177,7 +177,9 @@ export const ChatMessages = ({
             </div>
           </div>
         ) : (
-          <div className="mb-4 flex rounded-xl bg-slate-900 px-2 py-6 sm:px-4">
+          <div
+            className="mb-4 flex rounded-xl bg-slate-900 px-2 py-6 sm:px-4"
+            key={idx}>
             <img
               className="mr-2 flex h-8 w-8 rounded-full sm:mr-4"
               src="https://dummyimage.com/256x256/363536/ffffff&text=A"
@@ -194,10 +196,9 @@ export const ChatMessages = ({
 
 const preparePrompt = (messages: ChatMessage[]) => {
   let prompt = messages.reduce((acc, message) => {
-    const sender = message.from === ChatMessageType.User ? "User" : "AI"
-    return acc + sender + ": " + message.message + "\n"
+    return acc + message.from + ": " + message.message + "\n"
   }, "")
-  prompt += "AI: "
+  prompt += `${ChatMessageType.AI}: `
   return prompt
 }
 

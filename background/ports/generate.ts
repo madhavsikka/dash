@@ -1,12 +1,6 @@
-import { env } from "@xenova/transformers"
-
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import { generateSequence } from "~llm/customWorker"
-
-//@ts-ignore
-env.allowLocalModels = false
-env.backends.onnx.wasm.numThreads = 1
 
 const handler: PlasmoMessaging.MessageHandler = async (
   req: PlasmoMessaging.Request<string, Record<string, string>>,

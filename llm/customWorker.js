@@ -79,6 +79,10 @@ async function generate(data) {
   )
   const seq_len = 2048
 
+  const postProcessSentence = (sentence) => {
+    return sentence.replace(/<\|endoftext\|>/g, "").trim()
+  }
+
   let sentence = firstToken
   let maxTokens = maxSeqLen ? maxSeqLen : seq_len - prompt.length - 1
   let tokensCount = 0
@@ -87,18 +91,22 @@ async function generate(data) {
     console.log(token)
     if (token === "<|endoftext|>") {
       plasmoRes.send({
-        message: sentence.trim().replace(/<\|endoftext\|>/g, ""),
+        message: postProcessSentence(sentence),
         isRunning: false
       })
       return sentence
     }
     sentence += token
     plasmoRes.send({
-      message: sentence.trim().replace(/<\|endoftext\|>/g, ""),
+      message: postProcessSentence(sentence),
       isRunning: true
     })
     tokensCount++
   }
+  plasmoRes.send({
+    message: postProcessSentence(sentence),
+    isRunning: false
+  })
   return sentence
 }
 

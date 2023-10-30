@@ -2,7 +2,7 @@
 
 Dash is a chrome extension which powers an in-browser AI assistant, providing a secure, private, and open-source alternative to ChatGPT.
 
-![chat](https://github.com/madhavsikka/dash/assets/39848688/84df817f-9b11-4d0e-a3eb-9e886f15ac9f)
+![chat](./assets/chat.png)
 
 # Installation
 
